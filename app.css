@@ -1,0 +1,349 @@
+:root {
+  color-scheme: light;
+  --bakgrund: #e8f4ff;
+  --bakgrund-2: #f6fbff;
+  --kort: #ffffff;
+  --text: #1f2a37;
+  --mjuk: #5b6b7c;
+  --kant: #d4dde7;
+  --gron: #2fa84f;
+  --gron-mork: #22803b;
+  --lila: #7b4ce0;
+  --lila-mork: #5a34b0;
+  --gul: #ffcb2e;
+  --gul-mork: #d6a300;
+  --rod: #e5484d;
+  --rod-mork: #b3353a;
+  --rund: 18px;
+  font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; }
+
+body {
+  min-height: 100dvh;
+  background: linear-gradient(180deg, var(--bakgrund), var(--bakgrund-2));
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1.35;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+main {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding:
+    calc(16px + env(safe-area-inset-top)) calc(20px + env(safe-area-inset-right))
+    calc(28px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left));
+}
+
+[hidden] { display: none !important; }
+
+h1 { font-size: 40px; margin: 8px 0 20px; text-align: center; letter-spacing: -0.5px; }
+h2 { font-size: 30px; margin: 12px 0 16px; text-align: center; }
+h3 { font-size: 22px; margin: 22px 0 12px; }
+
+/* ---------- Knappar ---------- */
+button, .knapp { font: inherit; color: inherit; touch-action: manipulation; cursor: pointer; }
+
+.knapp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: var(--rund);
+  padding: 14px 22px;
+  font-weight: 700;
+  background: var(--kort);
+  box-shadow: 0 6px 0 var(--kant);
+  transition: transform 0.06s, box-shadow 0.06s;
+}
+.knapp:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 2px 0 var(--kant); }
+.knapp:disabled { opacity: 0.45; cursor: default; }
+.knapp.stor { font-size: 26px; padding: 20px 28px; min-height: 76px; }
+.knapp.jattestor { font-size: 32px; padding: 26px 40px; min-height: 96px; }
+.knapp.liten { font-size: 18px; padding: 10px 16px; }
+
+.knapp.gron { background: var(--gron); color: #fff; box-shadow: 0 6px 0 var(--gron-mork); }
+.knapp.gron:active:not(:disabled) { box-shadow: 0 2px 0 var(--gron-mork); }
+.knapp.lila { background: var(--lila); color: #fff; box-shadow: 0 6px 0 var(--lila-mork); }
+.knapp.lila:active:not(:disabled) { box-shadow: 0 2px 0 var(--lila-mork); }
+.knapp.gul { background: var(--gul); box-shadow: 0 6px 0 var(--gul-mork); }
+.knapp.gul:active:not(:disabled) { box-shadow: 0 2px 0 var(--gul-mork); }
+.knapp.rod { background: var(--rod); color: #fff; box-shadow: 0 6px 0 var(--rod-mork); }
+.knapp.rod:active:not(:disabled) { box-shadow: 0 2px 0 var(--rod-mork); }
+.knapp.vit { border: 2px solid var(--kant); }
+
+.knapprad { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; margin-top: 28px; }
+.knapprad.vanster { justify-content: flex-start; margin-top: 12px; }
+.knapprad .knapp.stor { flex: 1 1 320px; max-width: 460px; }
+
+.lank {
+  display: block;
+  margin: 36px auto 0;
+  border: 0;
+  background: none;
+  color: var(--mjuk);
+  font-size: 16px;
+  text-decoration: underline;
+  padding: 8px;
+}
+
+/* ---------- Startsidan ---------- */
+.sakrutnat { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 18px; }
+
+.sakplats { position: relative; display: flex; }
+
+.sakkort {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 12px 16px;
+  background: var(--kort);
+  border-radius: var(--rund);
+  border: 0;
+  box-shadow: 0 6px 0 var(--kant);
+  text-align: center;
+}
+.sakkort:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--kant); }
+.sakkort canvas { width: 112px; height: 112px; image-rendering: pixelated; }
+.sakkort .saknamn { font-weight: 800; font-size: 20px; overflow-wrap: anywhere; }
+.sakkort .sakkrafter { font-size: 22px; min-height: 28px; letter-spacing: 2px; }
+
+.slang {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: #f1f4f7;
+  font-size: 20px;
+}
+
+.tomt { text-align: center; color: var(--mjuk); font-size: 24px; margin: 40px 0 10px; }
+.tomt-emoji { display: block; font-size: 64px; margin-bottom: 8px; }
+
+/* ---------- Guiden ---------- */
+.guidetopp { display: flex; align-items: center; gap: 16px; min-height: 56px; }
+.prickar { display: flex; gap: 10px; list-style: none; margin: 0 auto; padding: 0; transform: translateX(-60px); }
+.prickar li { width: 16px; height: 16px; border-radius: 50%; background: var(--kant); }
+.prickar li.nu { background: var(--gron); transform: scale(1.3); }
+.prickar li.klar { background: var(--gron-mork); }
+
+.steg > .knapp.stor { display: flex; margin: 28px auto 0; min-width: 300px; }
+
+.mallrutnat { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 18px; }
+.mallkort {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 10px 14px;
+  border: 0;
+  border-radius: var(--rund);
+  background: var(--kort);
+  box-shadow: 0 6px 0 var(--kant);
+  font-weight: 800;
+  font-size: 22px;
+}
+.mallkort:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--kant); }
+.mallkort canvas { width: 104px; height: 104px; image-rendering: pixelated; }
+
+.ritplats { display: flex; gap: 24px; align-items: flex-start; justify-content: center; flex-wrap: wrap; }
+#rityta {
+  width: min(560px, 100%, 62dvh);
+  aspect-ratio: 1;
+  border-radius: 12px;
+  border: 4px solid #2b3440;
+  touch-action: none;
+  image-rendering: pixelated;
+  background: #fff;
+}
+.ritverktyg { display: flex; flex-direction: column; gap: 18px; }
+
+.palett { display: grid; grid-template-columns: repeat(4, 58px); gap: 10px; }
+.fargknapp {
+  width: 58px;
+  height: 58px;
+  border-radius: 14px;
+  border: 3px solid rgba(0, 0, 0, 0.15);
+}
+.fargknapp.vald { outline: 5px solid #2b3440; outline-offset: 3px; }
+
+.verktyg { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.verktygsknapp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 6px;
+  border: 3px solid transparent;
+  border-radius: 14px;
+  background: var(--kort);
+  box-shadow: 0 4px 0 var(--kant);
+  font-size: 30px;
+}
+.verktygsknapp span { font-size: 15px; font-weight: 700; }
+.verktygsknapp.vald { border-color: var(--gron); background: #eafbea; }
+.verktygsknapp:disabled { opacity: 0.4; }
+
+.forhand { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-top: 4px; }
+.forhandsbild { width: 96px; height: 96px; image-rendering: pixelated; }
+#forhandsnamn { font-weight: 800; font-size: 22px; }
+
+.namnrad { display: flex; gap: 12px; max-width: 620px; margin: 0 auto; }
+#namn {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  font-size: 28px;
+  font-weight: 700;
+  padding: 14px 18px;
+  border-radius: var(--rund);
+  border: 3px solid var(--kant);
+  background: #fff;
+  -webkit-user-select: text;
+  user-select: text;
+}
+#namn:focus { outline: none; border-color: var(--gron); }
+#slumpnamn { font-size: 30px; padding: 10px 20px; }
+
+.valrad { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+.valknapp {
+  flex: 0 1 190px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 10px;
+  border-radius: var(--rund);
+  border: 4px solid transparent;
+  background: var(--kort);
+  box-shadow: 0 6px 0 var(--kant);
+  font-size: 40px;
+}
+.valknapp span { font-size: 20px; font-weight: 800; }
+.valknapp.vald { border-color: var(--gron); background: #eafbea; }
+
+.kraftrutnat { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+.kraftkort {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: var(--rund);
+  border: 4px solid transparent;
+  background: var(--kort);
+  box-shadow: 0 6px 0 var(--kant);
+  text-align: left;
+}
+.kraftkort .kraftemoji { font-size: 44px; line-height: 1; }
+.kraftkort b { display: block; font-size: 22px; }
+.kraftkort small { display: block; font-size: 15px; color: var(--mjuk); }
+.kraftkort.vald { border-color: var(--gron); background: #eafbea; }
+.kraftkort.vald::after {
+  content: "✓";
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--gron);
+  color: #fff;
+  font-weight: 900;
+  display: grid;
+  place-items: center;
+}
+
+/* ---------- Skicka ---------- */
+.mitten { text-align: center; padding-top: 30px; }
+.stortext { font-size: 26px; }
+.litentext { font-size: 16px; color: var(--mjuk); }
+.snurra {
+  width: 72px;
+  height: 72px;
+  margin: 40px auto 10px;
+  border-radius: 50%;
+  border: 8px solid var(--kant);
+  border-top-color: var(--lila);
+  animation: snurra 0.9s linear infinite;
+}
+@keyframes snurra { to { transform: rotate(360deg); } }
+
+.vuxenruta, .vuxeninnehall {
+  max-width: 680px;
+  margin: 28px auto 0;
+  text-align: left;
+  font-size: 17px;
+  background: var(--kort);
+  border-radius: var(--rund);
+  padding: 14px 20px;
+  -webkit-user-select: text;
+  user-select: text;
+}
+.vuxenruta summary { font-weight: 700; cursor: pointer; }
+.vuxeninnehall h3 { margin-top: 16px; }
+.vuxeninnehall li { margin-bottom: 6px; }
+
+/* ---------- Dialog och meddelanden ---------- */
+dialog {
+  border: 0;
+  border-radius: 24px;
+  padding: 28px 28px 22px;
+  max-width: 460px;
+  text-align: center;
+  font-size: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+dialog::backdrop { background: rgba(20, 30, 45, 0.45); }
+dialog .knapprad { margin-top: 18px; }
+dialog .knapp { min-width: 120px; font-size: 22px; }
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(28px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  background: #1f2a37;
+  color: #fff;
+  padding: 14px 26px;
+  border-radius: 999px;
+  font-size: 22px;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  animation: upp 0.25s ease-out;
+}
+@keyframes upp { from { transform: translate(-50%, 20px); opacity: 0; } }
+
+/* Stående iPad: färger i två rader och verktygen på en rad, så allt syns utan att scrolla. */
+@media (orientation: portrait) and (min-width: 701px) {
+  .ritverktyg { width: min(560px, 100%); }
+  .palett { grid-template-columns: repeat(8, 1fr); }
+  .fargknapp { width: 100%; height: auto; aspect-ratio: 1; }
+  .verktyg { grid-template-columns: repeat(4, 1fr); }
+  .steg h2 { margin: 6px 0 12px; }
+}
+
+@media (max-width: 700px) {
+  h1 { font-size: 32px; }
+  .prickar { transform: none; }
+  .palett { grid-template-columns: repeat(8, 40px); }
+  .fargknapp { width: 40px; height: 40px; }
+  .verktyg { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .snurra { animation-duration: 3s; }
+  .toast { animation: none; }
+}

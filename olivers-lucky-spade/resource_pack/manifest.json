@@ -1,0 +1,29 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Olivers Lucky-spade",
+    "description": "Texturer för lucky-spaden och lucky blocks.",
+    "uuid": "65a33474-ad33-4415-b59a-b50fc4d1e5a7",
+    "version": [
+      1,
+      0,
+      4
+    ],
+    "min_engine_version": [
+      1,
+      26,
+      0
+    ]
+  },
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "0b2b7c26-c40b-4bfe-80da-a973e4830fe7",
+      "version": [
+        1,
+        0,
+        4
+      ]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "format_version": "1.21.60",
+  "minecraft:block": {
+    "description": {
+      "identifier": "oliver:lucky_block",
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:display_name": "tile.oliver:lucky_block.name",
+      "minecraft:material_instances": {
+        "*": {
+          "texture": "lucky_block",
+          "render_method": "opaque"
+        }
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 0.6
+      },
+      "minecraft:destructible_by_explosion": {
+        "explosion_resistance": 3
+      },
+      "minecraft:loot": "loot_tables/blocks/lucky_block.json",
+      "minecraft:light_emission": 4,
+      "minecraft:map_color": "#FFD82B"
+    }
+  }
+}

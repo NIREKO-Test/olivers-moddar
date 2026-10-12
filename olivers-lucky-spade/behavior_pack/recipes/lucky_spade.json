@@ -1,0 +1,18 @@
+{
+  "format_version": "1.20.10",
+  "minecraft:recipe_shaped": {
+    "description": { "identifier": "oliver:lucky_spade" },
+    "tags": ["crafting_table"],
+    "pattern": [
+      "G",
+      "S",
+      "S"
+    ],
+    "key": {
+      "G": { "item": "minecraft:gold_block" },
+      "S": { "item": "minecraft:stick" }
+    },
+    "unlock": [{ "item": "minecraft:gold_block" }],
+    "result": { "item": "oliver:lucky_spade" }
+  }
+}

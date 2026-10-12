@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Olivers moddar</title>
+  <meta name="description" content="Gör egna vapen med krafter till Minecraft.">
+  <meta name="theme-color" content="#3a9d4a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Moddar">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="ikoner/ikon-180.png">
+  <link rel="icon" type="image/png" href="ikoner/ikon-192.png">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <main>
+    <!-- Startsidan: alla saker Oliver gjort -->
+    <section id="hem" class="skarm">
+      <header class="hemtopp">
+        <h1><span aria-hidden="true">⛏️</span> Olivers moddar</h1>
+      </header>
+      <div id="saker" class="sakrutnat"></div>
+      <p id="tomt" class="tomt" hidden>
+        <span class="tomt-emoji" aria-hidden="true">✨</span>
+        Du har inga saker än.<br>Tryck på <b>Gör en ny sak</b>!
+      </p>
+      <div class="knapprad">
+        <button id="ny" class="knapp gron stor" type="button">➕ Gör en ny sak</button>
+        <button id="skicka" class="knapp lila stor" type="button">🚀 Skicka till Minecraft</button>
+      </div>
+      <button id="till-vuxna" class="lank" type="button">För vuxna</button>
+    </section>
+
+    <!-- Guiden: form, rita, namn, krafter -->
+    <section id="guide" class="skarm" hidden>
+      <header class="guidetopp">
+        <button id="bakat" class="knapp liten vit" type="button">⬅️ Tillbaka</button>
+        <ol id="prickar" class="prickar" aria-label="Steg">
+          <li></li><li></li><li></li><li></li>
+        </ol>
+      </header>
+
+      <div id="steg-form" class="steg">
+        <h2>Vad vill du göra?</h2>
+        <div id="mallar" class="mallrutnat"></div>
+      </div>
+
+      <div id="steg-rita" class="steg" hidden>
+        <h2>Rita!</h2>
+        <div class="ritplats">
+          <canvas id="rityta" width="512" height="512" aria-label="Rityta"></canvas>
+          <div class="ritverktyg">
+            <div id="palett" class="palett"></div>
+            <div class="verktyg">
+              <button type="button" class="verktygsknapp vald" data-verktyg="penna">✏️<span>Rita</span></button>
+              <button type="button" class="verktygsknapp" data-verktyg="hink">🪣<span>Fyll</span></button>
+              <button type="button" class="verktygsknapp" data-verktyg="sudd">🧽<span>Sudda</span></button>
+              <button type="button" class="verktygsknapp" id="angra">↩️<span>Ångra</span></button>
+            </div>
+          </div>
+        </div>
+        <button class="knapp gron stor nasta" type="button">Nästa ➡️</button>
+      </div>
+
+      <div id="steg-namn" class="steg" hidden>
+        <div class="forhand"><canvas class="forhandsbild" width="128" height="128"></canvas></div>
+        <h2>Vad heter den?</h2>
+        <div class="namnrad">
+          <input id="namn" type="text" maxlength="30" autocomplete="off" autocapitalize="sentences" spellcheck="false" placeholder="Skriv ett namn">
+          <button id="slumpnamn" class="knapp gul" type="button" aria-label="Hitta på ett namn">🎲</button>
+        </div>
+        <h2>Hur stark är den?</h2>
+        <div id="styrkor" class="valrad"></div>
+        <button class="knapp gron stor nasta" type="button">Nästa ➡️</button>
+      </div>
+
+      <div id="steg-krafter" class="steg" hidden>
+        <div class="forhand"><canvas class="forhandsbild" width="128" height="128"></canvas><span id="forhandsnamn"></span></div>
+        <h2>Vilka krafter ska den ha?</h2>
+        <h3>👊 När du slår en fiende</h3>
+        <div id="krafter-slag" class="kraftrutnat"></div>
+        <h3>👆 När du trycker</h3>
+        <div id="krafter-tryck" class="kraftrutnat"></div>
+        <button id="spara" class="knapp gron stor" type="button">✅ Klar! Spara</button>
+      </div>
+    </section>
+
+    <!-- Skicka till Minecraft -->
+    <section id="skicka-skarm" class="skarm" hidden>
+      <header class="guidetopp">
+        <button id="skicka-bakat" class="knapp liten vit" type="button">⬅️ Tillbaka</button>
+      </header>
+      <div id="skicka-packar" class="mitten">
+        <div class="snurra" aria-hidden="true"></div>
+        <h2>Packar ihop dina saker…</h2>
+      </div>
+      <div id="skicka-klar" class="mitten" hidden>
+        <h2>Klart! 🎉</h2>
+        <p class="stortext">Tryck på knappen och välj <b>Minecraft</b>.</p>
+        <button id="oppna" class="knapp lila jattestor" type="button">📤 Öppna i Minecraft</button>
+        <p class="litentext">Version <span id="skicka-version"></span></p>
+        <details class="vuxenruta">
+          <summary>För vuxna: så kommer sakerna in i spelet</summary>
+          <ol>
+            <li>Välj <b>Minecraft</b> i listan som dyker upp. Syns det inte: välj <b>Spara i Filer</b>, öppna filen i appen Filer och välj Minecraft därifrån.</li>
+            <li>Första gången: öppna världens inställningar och aktivera <b>Olivers moddar</b> under både <b>Beteendepaket</b> och <b>Resurspaket</b>.</li>
+            <li>Gå in i världen. Nya saker hamnar i ryggsäcken automatiskt.</li>
+          </ol>
+        </details>
+      </div>
+      <div id="skicka-fel" class="mitten" hidden>
+        <h2>Oj, något gick fel 😕</h2>
+        <p id="skicka-feltext" class="litentext"></p>
+      </div>
+    </section>
+
+    <!-- För vuxna -->
+    <section id="vuxen" class="skarm" hidden>
+      <header class="guidetopp">
+        <button id="vuxen-bakat" class="knapp liten vit" type="button">⬅️ Tillbaka</button>
+      </header>
+      <h2>För vuxna</h2>
+      <div class="vuxeninnehall">
+        <h3>Installera appen på iPaden</h3>
+        <ol>
+          <li>Öppna appens adress i <b>Safari</b>.</li>
+          <li>Tryck på dela-knappen och välj <b>Lägg till på hemskärmen</b>.</li>
+          <li>Använd appen från hemskärmen. Saker som görs i Safari-fliken sparas separat och syns inte i hemskärmsappen.</li>
+        </ol>
+        <h3>Få in sakerna i Minecraft</h3>
+        <ol>
+          <li><b>Skicka till Minecraft</b> och välj Minecraft i delningsmenyn.</li>
+          <li>Första gången: aktivera <b>Olivers moddar</b> i världens inställningar, under både Beteendepaket och Resurspaket.</li>
+          <li>När Oliver går in i världen står det "Olivers moddar är igång!" i chatten, och nya saker hamnar i ryggsäcken.</li>
+          <li>Ändrade saker uppdateras av sig själva. Röd text i chatten betyder att något gick fel; fota den.</li>
+        </ol>
+        <h3>Säkerhetskopia</h3>
+        <p>Sakerna sparas bara på den här enheten. Tas appen bort försvinner de, så spara en kopia ibland.</p>
+        <div class="knapprad vanster">
+          <button id="backup-spara" class="knapp vit" type="button">💾 Spara säkerhetskopia</button>
+          <label class="knapp vit">📂 Läs in säkerhetskopia<input id="backup-las" type="file" accept=".json,application/json" hidden></label>
+        </div>
+        <p class="litentext" id="vuxen-info"></p>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="fraga">
+    <p id="fraga-text"></p>
+    <div class="knapprad">
+      <button id="fraga-nej" class="knapp vit" type="button">Nej</button>
+      <button id="fraga-ja" class="knapp rod" type="button">Ja</button>
+    </div>
+  </dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

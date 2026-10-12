@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+olivers-lucky-spade/dist/
+.DS_Store

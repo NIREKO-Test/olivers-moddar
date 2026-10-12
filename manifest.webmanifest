@@ -1,0 +1,17 @@
+{
+  "name": "Olivers moddar",
+  "short_name": "Moddar",
+  "description": "Gör egna vapen med krafter till Minecraft.",
+  "lang": "sv",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#e8f4ff",
+  "theme_color": "#3a9d4a",
+  "icons": [
+    { "src": "ikoner/ikon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "ikoner/ikon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "ikoner/ikon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "format_version": 2,
+  "header": {
+    "name": "Olivers Lucky-spade",
+    "description": "En spade som gräver upp lucky blocks. Beteendepaket.",
+    "uuid": "e0081476-017a-4928-a18d-2dcd8f55a7af",
+    "version": [
+      1,
+      0,
+      4
+    ],
+    "min_engine_version": [
+      1,
+      26,
+      0
+    ]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "9c2773ba-37ce-472b-961e-c923dbf74ef5",
+      "version": [
+        1,
+        0,
+        4
+      ]
+    },
+    {
+      "type": "script",
+      "language": "javascript",
+      "uuid": "b32625fa-34ef-468c-bb19-6803f01f8cd2",
+      "version": [
+        1,
+        0,
+        4
+      ],
+      "entry": "scripts/main.js"
+    }
+  ],
+  "dependencies": [
+    {
+      "uuid": "65a33474-ad33-4415-b59a-b50fc4d1e5a7",
+      "version": [
+        1,
+        0,
+        4
+      ]
+    },
+    {
+      "module_name": "@minecraft/server",
+      "version": "2.9.0"
+    }
+  ]
+}
