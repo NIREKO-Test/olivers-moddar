@@ -142,15 +142,24 @@ export const MALLAR = [
 ];
 
 // Krafterna. "slag" = när man slår en fiende, "tryck" = när man trycker
-// med saken i handen.
+// med saken i handen. Texten visas i rutan när kraften är vald.
 export const KRAFTER = [
   { id: "eld", emoji: "🔥", namn: "Eld", slag: "Fienden börjar brinna" },
   { id: "blixt", emoji: "⚡", namn: "Blixt", slag: "Blixten slår ner i fienden", tryck: "Blixten slår ner där du tittar" },
   { id: "frys", emoji: "❄️", namn: "Frys", slag: "Fienden fryser fast" },
   { id: "explosion", emoji: "💥", namn: "Pang!", slag: "Det smäller vid fienden", tryck: "Det smäller där du tittar" },
+  { id: "skatt", emoji: "💎", namn: "Skatt", slag: "Fienden tappar en skatt" },
+  { id: "kyckling", emoji: "🐔", namn: "Kyckling", slag: "Fienden blir en kyckling" },
+  { id: "lakning", emoji: "❤️", namn: "Läkning", slag: "Du får hälsa när du slår" },
   { id: "teleport", emoji: "🌀", namn: "Teleport", tryck: "Du hoppar dit du tittar" },
   { id: "hopp", emoji: "🦘", namn: "Superhopp", tryck: "Du flyger högt upp i luften" },
+  { id: "regnbage", emoji: "🌈", namn: "Regnbåge", tryck: "Det du tittar på blir regnbåge" },
+  { id: "magnet", emoji: "🧲", namn: "Magnet", tryck: "Fienden du tittar på dras till dig" },
+  { id: "eldklot", emoji: "☄️", namn: "Eldklot", tryck: "Skjut eld på fienden du tittar på" },
 ];
+
+// Hur många krafter ett vapen får ha, slag och tryck tillsammans.
+export const MAX_KRAFTER = 3;
 
 export const STYRKOR = [
   { niva: 1, emoji: "🪶", namn: "Lätt", skada: 4 },

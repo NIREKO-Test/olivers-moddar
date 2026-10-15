@@ -1,4 +1,4 @@
-import { FARGER, MALLAR, KRAFTER, STYRKOR, NAMNFORSLAG, formTillPixlar } from "./mallar.js";
+import { FARGER, MALLAR, KRAFTER, MAX_KRAFTER, STYRKOR, NAMNFORSLAG, formTillPixlar } from "./mallar.js";
 import { byggPaket, nyttPaket, stadaNamn } from "./paket.js";
 import { skapaRityta, ritaMiniatyr } from "./rita.js";
 
@@ -289,7 +289,57 @@ function visaStyrkor() {
   );
 }
 
+// Valda krafter i den ordning de visas i rutorna: slag först, sedan tryck.
+function valdaKrafter() {
+  return [
+    ...utkast.slag.map((id) => ({ id, typ: "slag" })),
+    ...utkast.tryck.map((id) => ({ id, typ: "tryck" })),
+  ];
+}
+
+function taBortKraft(id, typ) {
+  utkast[typ] = utkast[typ].filter((annan) => annan !== id);
+  andrat = true;
+  visaKrafter();
+}
+
 function visaKrafter() {
+  const valda = valdaKrafter();
+  const forManga = valda.length > MAX_KRAFTER;
+  const fullt = valda.length >= MAX_KRAFTER;
+
+  // Rutorna: valda krafter med förklaring, och tomma rutor för resten.
+  const rutor = valda.map(({ id, typ }) => {
+    const kraft = KRAFTER.find((k) => k.id === id);
+    return el(
+      "button",
+      {
+        class: "plats fylld" + (forManga ? " for-manga" : ""),
+        type: "button",
+        "aria-label": `Ta bort ${kraft.namn}`,
+        onclick: () => taBortKraft(id, typ),
+      },
+      el("span", { class: "platsemoji", text: kraft.emoji }),
+      el("span", {}, el("b", { text: `${typ === "slag" ? "👊" : "👆"} ${kraft.namn}` }), el("small", { text: kraft[typ] })),
+    );
+  });
+  for (let i = valda.length; i < MAX_KRAFTER; i++) {
+    rutor.push(el("div", { class: "plats" }, el("span", { class: "tom", text: "Tom ruta" })));
+  }
+  $("#platser").replaceChildren(...rutor);
+
+  const info = $("#kraftinfo");
+  info.classList.toggle("varning", forManga);
+  if (forManga) {
+    const tabort = valda.length - MAX_KRAFTER;
+    info.textContent = `Nu får ett vapen ha ${MAX_KRAFTER} krafter. Tryck på ${tabort === 1 ? "en ruta" : `${tabort} rutor`} för att ta bort.`;
+  } else if (fullt) {
+    info.textContent = "Alla rutor är fulla! Tryck på en ruta för att byta.";
+  } else {
+    info.textContent = valda.length ? "Tryck på en ruta för att ta bort den." : "Tryck på en kraft så hamnar den i en ruta.";
+  }
+
+  // Korten.
   for (const typ of ["slag", "tryck"]) {
     $(`#krafter-${typ}`).replaceChildren(
       ...KRAFTER.filter((kraft) => kraft[typ]).map((kraft) => {
@@ -297,21 +347,30 @@ function visaKrafter() {
         return el(
           "button",
           {
-            class: "kraftkort" + (vald ? " vald" : ""),
+            class: "kraftkort" + (vald ? " vald" : !vald && fullt ? " blek" : ""),
             type: "button",
             "aria-pressed": String(vald),
             onclick: () => {
-              utkast[typ] = vald ? utkast[typ].filter((id) => id !== kraft.id) : [...utkast[typ], kraft.id];
+              if (vald) return taBortKraft(kraft.id, typ);
+              if (fullt) {
+                visaToast("Alla rutor är fulla! Ta bort en först.");
+                return;
+              }
+              utkast[typ] = [...utkast[typ], kraft.id];
               andrat = true;
               visaKrafter();
             },
           },
           el("span", { class: "kraftemoji", text: kraft.emoji }),
-          el("span", {}, el("b", { text: kraft.namn }), el("small", { text: kraft[typ] })),
+          el("b", { text: kraft.namn }),
         );
       }),
     );
   }
+
+  const spara = $("#spara");
+  spara.disabled = forManga;
+  spara.textContent = forManga ? `Ta bort ${valda.length - MAX_KRAFTER} först` : "✅ Klar! Spara";
 }
 
 function slumpaNamn() {

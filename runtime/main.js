@@ -1,4 +1,4 @@
-import { world, system, ItemStack, EquipmentSlot } from "@minecraft/server";
+import { world, system, ItemStack, EquipmentSlot, EntityDamageCause } from "@minecraft/server";
 import { PAKET, SAKER } from "./saker.js";
 
 // Körs inne i Minecraft. Appen skriver saker.js med Olivers saker och deras
@@ -84,6 +84,35 @@ function siktpunkt(spelare) {
   };
 }
 
+// Första varelsen spelaren tittar på, om någon.
+function varelseISikte(spelare) {
+  return spelare.getEntitiesFromViewDirection({ maxDistance: RACKVIDD })[0]?.entity;
+}
+
+// Block som aldrig får göras om till regnbåge.
+const SKYDDADE_BLOCK = new Set([
+  "minecraft:bedrock",
+  "minecraft:barrier",
+  "minecraft:command_block",
+  "minecraft:chain_command_block",
+  "minecraft:repeating_command_block",
+  "minecraft:structure_block",
+  "minecraft:end_portal",
+  "minecraft:end_portal_frame",
+  "minecraft:portal",
+  "minecraft:end_gateway",
+]);
+const REGNBAGE = ["red", "orange", "yellow", "lime", "light_blue", "blue", "purple"].map((f) => `minecraft:${f}_wool`);
+const BOSSAR = new Set(["minecraft:ender_dragon", "minecraft:wither"]);
+/** @type {[string, number, number][]} */
+const SKATTER = [
+  ["minecraft:diamond", 1, 3],
+  ["minecraft:emerald", 1, 3],
+  ["minecraft:gold_ingot", 2, 5],
+  ["minecraft:iron_ingot", 3, 6],
+  ["minecraft:golden_apple", 1, 1],
+];
+
 // En kort stunds skydd så Oliver inte skadas av sina egna blixtar och smällar.
 function skydda(spelare) {
   spelare.addEffect("resistance", 40, { amplifier: 4, showParticles: false });
@@ -110,6 +139,28 @@ const SLAG = {
   explosion(spelare, mal) {
     skydda(spelare);
     mal.dimension.createExplosion(mal.location, 3, { breaksBlocks: false, causesFire: false, source: spelare });
+  },
+  skatt(spelare, mal) {
+    const [id, minst, mest] = SKATTER[Math.floor(Math.random() * SKATTER.length)];
+    const antal = minst + Math.floor(Math.random() * (mest - minst + 1));
+    mal.dimension.spawnItem(new ItemStack(id, antal), mitt(mal));
+    partiklar(mal.dimension, "minecraft:villager_happy", mitt(mal), 10, 0.6);
+    ljud(mal.dimension, "random.orb", mal.location);
+  },
+  kyckling(spelare, mal) {
+    if (mal.typeId === "minecraft:player" || BOSSAR.has(mal.typeId)) {
+      spelare.onScreenDisplay.setActionBar("Den är för stark för att bli kyckling!");
+      return;
+    }
+    const { dimension, location } = mal;
+    mal.remove();
+    dimension.spawnEntity("minecraft:chicken", location);
+    partiklar(dimension, "minecraft:villager_happy", { x: location.x, y: location.y + 0.5, z: location.z }, 16, 0.6);
+    ljud(dimension, "mob.chicken.plop", location);
+  },
+  lakning(spelare) {
+    spelare.addEffect("instant_health", 1, { amplifier: 0, showParticles: false });
+    partiklar(spelare.dimension, "minecraft:heart_particle", mitt(spelare), 6, 0.5);
   },
 };
 
@@ -160,6 +211,52 @@ const TRYCK = {
       }
     }, 14);
   },
+  regnbage(spelare) {
+    const traff = spelare.getBlockFromViewDirection({ maxDistance: RACKVIDD });
+    if (!traff) {
+      spelare.onScreenDisplay.setActionBar("Titta på något så blir det regnbåge!");
+      return;
+    }
+    const dimension = spelare.dimension;
+    const c = traff.block.location;
+    strale(dimension, spelare.getHeadLocation(), { x: c.x + 0.5, y: c.y + 0.5, z: c.z + 0.5 }, "minecraft:villager_happy");
+    for (let dy = 2; dy >= -2; dy--) {
+      for (let dx = -2; dx <= 2; dx++) {
+        for (let dz = -2; dz <= 2; dz++) {
+          if (dx * dx + dy * dy + dz * dz > 5) continue;
+          const block = dimension.getBlock({ x: c.x + dx, y: c.y + dy, z: c.z + dz });
+          if (!block || block.isAir || block.isLiquid || SKYDDADE_BLOCK.has(block.typeId)) continue;
+          if (block.getComponent("minecraft:inventory")) continue; // kistor och liknande
+          block.setType(REGNBAGE[2 - dy]);
+        }
+      }
+    }
+    ljud(dimension, "random.orb", c);
+  },
+  magnet(spelare) {
+    const mal = varelseISikte(spelare);
+    if (!mal) {
+      spelare.onScreenDisplay.setActionBar("Sikta på ett monster!");
+      return;
+    }
+    const p = spelare.location;
+    const riktning = spelare.getViewDirection();
+    const hit = { x: p.x + riktning.x * 2, y: p.y, z: p.z + riktning.z * 2 };
+    partiklar(mal.dimension, "minecraft:basic_portal_particle", mitt(mal), 20, 0.6);
+    mal.teleport(hit);
+    ljud(spelare.dimension, "mob.endermen.portal", hit);
+  },
+  eldklot(spelare) {
+    const mal = varelseISikte(spelare);
+    const huvud = spelare.getHeadLocation();
+    const riktning = spelare.getViewDirection();
+    const till = mal ? mitt(mal) : { x: huvud.x + riktning.x * 20, y: huvud.y + riktning.y * 20, z: huvud.z + riktning.z * 20 };
+    strale(spelare.dimension, huvud, till, "minecraft:basic_flame_particle");
+    ljud(spelare.dimension, "mob.blaze.shoot", spelare.location);
+    if (!mal) return;
+    mal.setOnFire(ELD_TID, true);
+    mal.applyDamage(6, { cause: EntityDamageCause.fire, damagingEntity: spelare });
+  },
 };
 
 function heldSak(spelare) {
@@ -173,7 +270,9 @@ world.afterEvents.entityHitEntity.subscribe(({ damagingEntity: spelare, hitEntit
     const sak = heldSak(spelare);
     if (!sak) return;
     system.run(() => {
+      if (!mal.isValid) return;
       for (const kraft of sak.slag) {
+        if (!mal.isValid) break;
         try {
           SLAG[kraft]?.(spelare, mal);
         } catch (fel) {

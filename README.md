@@ -23,17 +23,27 @@ namn och en styrka, väljer krafter och skickar allt till Minecraft som ett
 
 ## Krafter
 
-| Kraft     | När du slår          | När du trycker        |
-|-----------|----------------------|-----------------------|
-| Eld       | fienden brinner      |                       |
-| Blixt     | blixt i fienden      | blixt där du tittar   |
-| Frys      | fienden står still   |                       |
-| Pang!     | smäll vid fienden    | smäll där du tittar   |
-| Teleport  |                      | hoppar dit du tittar  |
-| Superhopp |                      | flyger upp i luften   |
+Ett vapen kan ha högst tre krafter (`MAX_KRAFTER` i `mallar.js`). Alla valda
+krafter händer samtidigt.
+
+| Kraft     | När du slår                  | När du trycker                      |
+|-----------|------------------------------|-------------------------------------|
+| Eld       | fienden brinner              |                                     |
+| Blixt     | blixt i fienden              | blixt där du tittar                 |
+| Frys      | fienden står still           |                                     |
+| Pang!     | smäll vid fienden            | smäll där du tittar                 |
+| Skatt     | fienden tappar en skatt      |                                     |
+| Kyckling  | fienden blir en kyckling     |                                     |
+| Läkning   | du får hälsa                 |                                     |
+| Teleport  |                              | hoppar dit du tittar                |
+| Superhopp |                              | flyger upp i luften                 |
+| Regnbåge  |                              | blocken du tittar på blir regnbåge  |
+| Magnet    |                              | fienden du tittar på dras till dig  |
+| Eldklot   |                              | eld på fienden du tittar på         |
 
 Smällarna förstör inga block, och Oliver skyddas en kort stund från sina
-egna blixtar och smällar.
+egna blixtar och smällar. Regnbågen rör aldrig kistor, bedrock eller
+portaler, och spelare och bossar kan inte bli kycklingar.
 
 ## Filer
 
