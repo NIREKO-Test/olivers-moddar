@@ -443,6 +443,48 @@ function visaVuxen() {
     `Appversion ${APPVERSION} · ${data.saker.length} saker · ` +
     (data.paket.byggnummer ? `senast skickade paket: version 1.0.${data.paket.byggnummer}` : "inget paket skickat än");
   visaSkarm("vuxen");
+  forberedTestPaket();
+}
+
+// ---------- Test: vilken filtyp gör att Minecraft syns i delningsmenyn? ----------
+
+let testPaket = null;
+
+async function forberedTestPaket() {
+  testPaket = null;
+  for (const knapp of document.querySelectorAll(".testdelning")) knapp.disabled = true;
+  if (!data.saker.length) {
+    $("#testdelning-info").textContent = "Gör minst en sak först.";
+    return;
+  }
+  try {
+    const svar = await fetch("runtime/main.js", { cache: "no-cache" });
+    if (!svar.ok) throw new Error(`Kunde inte läsa skriptet (${svar.status})`);
+    testPaket = byggPaket({ paket: data.paket, saker: data.saker, runtimeKod: await svar.text() });
+    for (const knapp of document.querySelectorAll(".testdelning")) knapp.disabled = false;
+    $("#testdelning-info").textContent = `Paketet är klart (version ${testPaket.version}).`;
+  } catch (fel) {
+    $("#testdelning-info").textContent = String(fel?.message ?? fel);
+  }
+}
+
+// Delningen måste starta direkt i trycket, därför är paketet byggt i förväg.
+async function testaDelning(knapp) {
+  if (!testPaket) return;
+  const fil = new File([testPaket.bytes], testPaket.filnamn, { type: knapp.dataset.typ });
+  if (!navigator.canShare?.({ files: [fil] })) {
+    visaToast(`${knapp.textContent}: kan inte delas här`);
+    return;
+  }
+  try {
+    await navigator.share({ files: [fil] });
+    // Delningen gick igenom: räkna upp versionen så nästa paket blir nyare.
+    data.paket.byggnummer += 1;
+    spara();
+    forberedTestPaket();
+  } catch (fel) {
+    if (fel?.name !== "AbortError") visaToast(`${knapp.textContent}: ${fel?.message ?? fel}`);
+  }
 }
 
 async function sparaBackup() {
@@ -496,6 +538,9 @@ $("#oppna").addEventListener("click", () => paketFil && delaEllerLaddaNer(paketF
 $("#skicka-bakat").addEventListener("click", () => visaSkarm("hem"));
 $("#vuxen-bakat").addEventListener("click", () => visaSkarm("hem"));
 $("#backup-spara").addEventListener("click", sparaBackup);
+for (const knapp of document.querySelectorAll(".testdelning")) {
+  knapp.addEventListener("click", () => testaDelning(knapp));
+}
 $("#backup-las").addEventListener("change", (event) => {
   const fil = event.target.files?.[0];
   event.target.value = "";
