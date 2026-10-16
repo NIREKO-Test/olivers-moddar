@@ -14,8 +14,9 @@ namn och en styrka, väljer krafter och skickar allt till Minecraft som ett
 
 ## Få in sakerna i Minecraft
 
-1. **Skicka till Minecraft** → **Öppna i Minecraft** → välj Minecraft i
-   delningsmenyn (eller Spara i Filer och öppna därifrån).
+1. **Skicka till Minecraft** → **Öppna i Minecraft**. Filen laddas ner och
+   visas; tryck **Öppna i "Minecraft"**. (Delningsmenyn från en webbapp
+   erbjuder inte Minecraft, men en nedladdad fil gör det.)
 2. Första gången: aktivera **Olivers moddar** i världens inställningar, under
    både Beteendepaket och Resurspaket.
 3. I världen står det "Olivers moddar är igång!" i chatten, och nya saker

@@ -93,6 +93,17 @@ function fraga(text, ja = "Ja", nej = "Nej") {
   });
 }
 
+// Laddar ner filen. På iPaden visas den då med knappen "Öppna i Minecraft",
+// vilket delningsmenyn inte erbjuder för filer från en webbapp.
+function laddaNer(fil) {
+  const url = URL.createObjectURL(fil);
+  const lank = el("a", { href: url, download: fil.name });
+  document.body.append(lank);
+  lank.click();
+  lank.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 120_000);
+}
+
 // Delar filen via iPadens delningsmeny, eller laddar ner den om det inte går.
 async function delaEllerLaddaNer(fil) {
   if (navigator.canShare?.({ files: [fil] })) {
@@ -103,12 +114,7 @@ async function delaEllerLaddaNer(fil) {
       if (fel?.name === "AbortError") return;
     }
   }
-  const url = URL.createObjectURL(fil);
-  const lank = el("a", { href: url, download: fil.name });
-  document.body.append(lank);
-  lank.click();
-  lank.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+  laddaNer(fil);
   visaToast("Filen är nedladdad 📥");
 }
 
@@ -443,61 +449,6 @@ function visaVuxen() {
     `Appversion ${APPVERSION} · ${data.saker.length} saker · ` +
     (data.paket.byggnummer ? `senast skickade paket: version 1.0.${data.paket.byggnummer}` : "inget paket skickat än");
   visaSkarm("vuxen");
-  forberedTestPaket();
-}
-
-// ---------- Test: vilken filtyp gör att Minecraft syns i delningsmenyn? ----------
-
-let testPaket = null;
-
-async function forberedTestPaket() {
-  testPaket = null;
-  for (const knapp of document.querySelectorAll(".testdelning")) knapp.disabled = true;
-  if (!data.saker.length) {
-    $("#testdelning-info").textContent = "Gör minst en sak först.";
-    return;
-  }
-  try {
-    const svar = await fetch("runtime/main.js", { cache: "no-cache" });
-    if (!svar.ok) throw new Error(`Kunde inte läsa skriptet (${svar.status})`);
-    testPaket = byggPaket({ paket: data.paket, saker: data.saker, runtimeKod: await svar.text() });
-    for (const knapp of document.querySelectorAll(".testdelning")) knapp.disabled = false;
-    $("#testdelning-info").textContent = `Paketet är klart (version ${testPaket.version}).`;
-  } catch (fel) {
-    $("#testdelning-info").textContent = String(fel?.message ?? fel);
-  }
-}
-
-// Delningen måste starta direkt i trycket, därför är paketet byggt i förväg.
-async function testaDelning(knapp) {
-  if (!testPaket) return;
-  const fil = new File([testPaket.bytes], testPaket.filnamn, { type: knapp.dataset.typ });
-  if (knapp.dataset.satt === "ladda-ner") {
-    // Test D: vanlig nedladdning. iPaden visar då ofta en förhandsvisning med egen dela-knapp.
-    const url = URL.createObjectURL(fil);
-    const lank = el("a", { href: url, download: fil.name });
-    document.body.append(lank);
-    lank.click();
-    lank.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 120_000);
-    data.paket.byggnummer += 1;
-    spara();
-    forberedTestPaket();
-    return;
-  }
-  if (!navigator.canShare?.({ files: [fil] })) {
-    visaToast(`${knapp.textContent}: kan inte delas här`);
-    return;
-  }
-  try {
-    await navigator.share({ files: [fil] });
-    // Delningen gick igenom: räkna upp versionen så nästa paket blir nyare.
-    data.paket.byggnummer += 1;
-    spara();
-    forberedTestPaket();
-  } catch (fel) {
-    if (fel?.name !== "AbortError") visaToast(`${knapp.textContent}: ${fel?.message ?? fel}`);
-  }
 }
 
 async function sparaBackup() {
@@ -547,13 +498,10 @@ $("#slumpnamn").addEventListener("click", () => {
   andrat = true;
 });
 $("#spara").addEventListener("click", sparaSak);
-$("#oppna").addEventListener("click", () => paketFil && delaEllerLaddaNer(paketFil));
+$("#oppna").addEventListener("click", () => paketFil && laddaNer(paketFil));
 $("#skicka-bakat").addEventListener("click", () => visaSkarm("hem"));
 $("#vuxen-bakat").addEventListener("click", () => visaSkarm("hem"));
 $("#backup-spara").addEventListener("click", sparaBackup);
-for (const knapp of document.querySelectorAll(".testdelning")) {
-  knapp.addEventListener("click", () => testaDelning(knapp));
-}
 $("#backup-las").addEventListener("change", (event) => {
   const fil = event.target.files?.[0];
   event.target.value = "";
