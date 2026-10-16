@@ -1,6 +1,6 @@
 // Gör att appen fungerar utan internet. Hämtar alltid nytt när det går
 // (så uppdateringar kommer direkt) och faller tillbaka på det sparade annars.
-const CACHE = "olivers-moddar-v1";
+const CACHE = "olivers-moddar-v2";
 const FILER = [
   "./",
   "index.html",
@@ -34,8 +34,10 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   if (request.method !== "GET" || new URL(request.url).origin !== self.location.origin) return;
+  // "no-cache": fråga alltid servern om det finns nytt, så appens filer aldrig
+  // blir en blandning av gammalt och nytt efter en uppdatering.
   event.respondWith(
-    fetch(request)
+    fetch(request.url, { cache: "no-cache", credentials: "same-origin" })
       .then((svar) => {
         if (svar.ok) {
           const kopia = svar.clone();
