@@ -415,6 +415,16 @@ function sparaSak() {
 
 // ---------- Skicka till Minecraft ----------
 
+// Kort kontrollsumma (FNV-1a) för att se om något ändrats sedan förra paketet.
+function fingeravtryck(text) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < text.length; i++) {
+    h ^= text.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return (h >>> 0).toString(16);
+}
+
 let paketFil = null;
 
 async function skicka() {
@@ -427,9 +437,17 @@ async function skicka() {
     const svar = await fetch("runtime/main.js", { cache: "no-cache" });
     if (!svar.ok) throw new Error(`Kunde inte läsa skriptet (${svar.status})`);
     const runtimeKod = await svar.text();
-    const { filnamn, bytes, version } = byggPaket({ paket: data.paket, saker: data.saker, runtimeKod });
-    data.paket.byggnummer += 1;
-    spara();
+    // Har inget ändrats sedan förra gången återanvänds versionen. Minecraft
+    // sparar varje ny version bredvid de gamla, så onödiga versioner blir dubbletter.
+    const innehall = fingeravtryck(JSON.stringify(data.saker) + runtimeKod);
+    const oforandrat = data.paket.byggnummer > 0 && innehall === data.paket.senastInnehall;
+    const paket = oforandrat ? { ...data.paket, byggnummer: data.paket.byggnummer - 1 } : data.paket;
+    const { filnamn, bytes, version } = byggPaket({ paket, saker: data.saker, runtimeKod });
+    if (!oforandrat) {
+      data.paket.byggnummer += 1;
+      data.paket.senastInnehall = innehall;
+      spara();
+    }
     paketFil = new File([bytes], filnamn, { type: "application/octet-stream" });
     $("#skicka-version").textContent = version;
     await new Promise((klar) => setTimeout(klar, 500));
