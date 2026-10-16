@@ -472,6 +472,19 @@ async function forberedTestPaket() {
 async function testaDelning(knapp) {
   if (!testPaket) return;
   const fil = new File([testPaket.bytes], testPaket.filnamn, { type: knapp.dataset.typ });
+  if (knapp.dataset.satt === "ladda-ner") {
+    // Test D: vanlig nedladdning. iPaden visar då ofta en förhandsvisning med egen dela-knapp.
+    const url = URL.createObjectURL(fil);
+    const lank = el("a", { href: url, download: fil.name });
+    document.body.append(lank);
+    lank.click();
+    lank.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 120_000);
+    data.paket.byggnummer += 1;
+    spara();
+    forberedTestPaket();
+    return;
+  }
   if (!navigator.canShare?.({ files: [fil] })) {
     visaToast(`${knapp.textContent}: kan inte delas här`);
     return;
